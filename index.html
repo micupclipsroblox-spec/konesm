@@ -1,1685 +1,360 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07110b">
-  <meta name="description" content="KoneSMP — join the survival world, explore the shop, and become part of the community.">
-  <title>KoneSMP | Minecraft Survival</title>
-  <style>
-    /* ============================================================
-       KONESMP WEBSITE
-       One-file landing page: HTML + CSS + JavaScript.
-       Change SERVER_IP and WEBSITE_URL in the JavaScript section.
-       ============================================================ */
-
-    :root {
-      --bg: #050906;
-      --bg-soft: #0b130d;
-      --panel: rgba(13, 25, 16, 0.88);
-      --panel-light: rgba(19, 37, 23, 0.9);
-      --green: #37f078;
-      --green-bright: #73ff9d;
-      --green-dark: #137b3b;
-      --gold: #f5cb61;
-      --text: #f1fff4;
-      --muted: #a8b9ac;
-      --border: rgba(93, 255, 139, 0.2);
-      --shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
-      --radius: 20px;
-      --max-width: 1180px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 90px;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 10%, rgba(26, 120, 55, 0.18), transparent 30%),
-        radial-gradient(circle at 85% 28%, rgba(41, 255, 111, 0.1), transparent 26%),
-        linear-gradient(160deg, #07110a 0%, #030604 65%, #08130b 100%);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.16;
-      z-index: -1;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-      background-size: 38px 38px;
-      mask-image: linear-gradient(to bottom, black, transparent 85%);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    .skip-link {
-      position: absolute;
-      left: 12px;
-      top: -80px;
-      z-index: 1000;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: var(--green);
-      color: #041008;
-      font-weight: 800;
-    }
-
-    .skip-link:focus {
-      top: 12px;
-    }
-
-    .container {
-      width: min(var(--max-width), calc(100% - 40px));
-      margin-inline: auto;
-    }
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(18px);
-      background: rgba(4, 10, 6, 0.82);
-      border-bottom: 1px solid rgba(116, 255, 157, 0.12);
-    }
-
-    .nav {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 22px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      min-width: max-content;
-    }
-
-    .brand-mark {
-      display: grid;
-      place-items: center;
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
-      color: #041008;
-      background: linear-gradient(135deg, var(--green-bright), var(--green-dark));
-      box-shadow: 0 0 24px rgba(55, 240, 120, 0.25);
-      font-size: 24px;
-      font-weight: 1000;
-      transform: rotate(-3deg);
-    }
-
-    .brand-name {
-      display: block;
-      font-weight: 950;
-      font-size: 1.15rem;
-      letter-spacing: 0.08em;
-      line-height: 1.1;
-    }
-
-    .brand-tagline {
-      display: block;
-      color: var(--muted);
-      font-size: 0.72rem;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      color: #d4e7d8;
-      font-size: 0.94rem;
-    }
-
-    .nav-links a {
-      transition: color 160ms ease;
-    }
-
-    .nav-links a:hover,
-    .nav-links a:focus-visible {
-      color: var(--green-bright);
-    }
-
-    .nav-toggle {
-      display: none;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      background: var(--panel);
-      padding: 8px 11px;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      min-height: 48px;
-      padding: 12px 20px;
-      border: 1px solid transparent;
-      border-radius: 13px;
-      font-weight: 850;
-      letter-spacing: 0.01em;
-      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
-    }
-
-    .button:hover {
-      transform: translateY(-2px);
-    }
-
-    .button:focus-visible,
-    .nav-toggle:focus-visible,
-    .copy-button:focus-visible,
-    .faq-question:focus-visible {
-      outline: 3px solid var(--gold);
-      outline-offset: 3px;
-    }
-
-    .button-primary {
-      color: #041008;
-      background: linear-gradient(135deg, #8affad, #29e86d);
-      box-shadow: 0 10px 28px rgba(43, 239, 108, 0.2);
-    }
-
-    .button-primary:hover {
-      box-shadow: 0 14px 36px rgba(43, 239, 108, 0.34);
-    }
-
-    .button-secondary {
-      color: var(--text);
-      border-color: var(--border);
-      background: rgba(255, 255, 255, 0.035);
-    }
-
-    .button-secondary:hover {
-      border-color: rgba(115, 255, 157, 0.55);
-      background: rgba(55, 240, 120, 0.08);
-    }
-
-    .hero {
-      position: relative;
-      isolation: isolate;
-      padding: 94px 0 76px;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -2;
-      background:
-        linear-gradient(90deg, rgba(3, 8, 4, 0.98), rgba(3, 8, 4, 0.74) 52%, rgba(3, 8, 4, 0.93)),
-        url("assets/konesmp-background.png") center / cover no-repeat;
-      opacity: 0.85;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: auto 0 0;
-      height: 150px;
-      z-index: -1;
-      background: linear-gradient(transparent, var(--bg));
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-      align-items: center;
-      gap: 55px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 7px 12px;
-      color: #b9ffcb;
-      border: 1px solid rgba(115, 255, 157, 0.25);
-      border-radius: 999px;
-      background: rgba(28, 107, 52, 0.18);
-      font-size: 0.78rem;
-      font-weight: 850;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-    }
-
-    .eyebrow-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 12px var(--green);
-    }
-
-    h1 {
-      max-width: 760px;
-      margin: 22px 0 18px;
-      font-size: clamp(3.2rem, 7vw, 6.2rem);
-      font-weight: 1000;
-      line-height: 0.98;
-      letter-spacing: -0.065em;
-    }
-
-    .gradient-text {
-      color: var(--green-bright);
-      background: linear-gradient(100deg, #eaffef, #69ff9a 42%, #1ed65d);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-copy {
-      max-width: 630px;
-      color: #c2d3c6;
-      font-size: 1.12rem;
-      margin: 0 0 28px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .hero-note {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      margin-top: 21px;
-      font-size: 0.88rem;
-    }
-
-    .hero-note strong {
-      color: #e8ffed;
-    }
-
-    .hero-card {
-      position: relative;
-      padding: 27px;
-      border: 1px solid rgba(115, 255, 157, 0.24);
-      border-radius: 25px;
-      background: linear-gradient(150deg, rgba(18, 39, 23, 0.93), rgba(5, 13, 7, 0.95));
-      box-shadow: var(--shadow), inset 0 1px rgba(255, 255, 255, 0.04);
-      overflow: hidden;
-    }
-
-    .hero-card::before {
-      content: "";
-      position: absolute;
-      top: -80px;
-      right: -70px;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: rgba(55, 240, 120, 0.11);
-      filter: blur(10px);
-    }
-
-    .card-topline {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 23px;
-    }
-
-    .card-label {
-      color: var(--muted);
-      font-size: 0.77rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      border: 1px solid rgba(245, 203, 97, 0.28);
-      border-radius: 999px;
-      padding: 6px 10px;
-      color: #ffe6a0;
-      background: rgba(245, 203, 97, 0.08);
-      font-size: 0.73rem;
-      font-weight: 800;
-    }
-
-    .status-pill::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-    }
-
-    .server-name {
-      margin: 0;
-      font-size: 2rem;
-      line-height: 1.1;
-      font-weight: 950;
-    }
-
-    .server-description {
-      color: var(--muted);
-      margin: 9px 0 22px;
-      font-size: 0.94rem;
-    }
-
-    .ip-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px;
-      border: 1px solid rgba(115, 255, 157, 0.19);
-      border-radius: 13px;
-      background: rgba(0, 0, 0, 0.25);
-    }
-
-    .ip-content {
-      min-width: 0;
-    }
-
-    .ip-caption {
-      display: block;
-      color: var(--muted);
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .ip-address {
-      display: block;
-      overflow-wrap: anywhere;
-      margin-top: 3px;
-      color: var(--green-bright);
-      font-weight: 900;
-      font-size: 1rem;
-    }
-
-    .copy-button {
-      flex: 0 0 auto;
-      border: 1px solid rgba(115, 255, 157, 0.25);
-      border-radius: 10px;
-      padding: 10px 12px;
-      color: #051109;
-      background: var(--green-bright);
-      font-size: 0.82rem;
-      font-weight: 900;
-    }
-
-    .copy-button:hover {
-      background: #b4ffc7;
-    }
-
-    .copy-feedback {
-      min-height: 23px;
-      margin: 8px 0 0;
-      color: var(--green-bright);
-      font-size: 0.8rem;
-    }
-
-    .server-meta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 17px;
-    }
-
-    .meta-box {
-      padding: 13px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.035);
-    }
-
-    .meta-label {
-      display: block;
-      color: var(--muted);
-      font-size: 0.72rem;
-    }
-
-    .meta-value {
-      display: block;
-      margin-top: 3px;
-      font-weight: 850;
-    }
-
-    .section {
-      padding: 76px 0;
-    }
-
-    .section-heading {
-      max-width: 720px;
-      margin: 0 auto 35px;
-      text-align: center;
-    }
-
-    .section-kicker {
-      margin: 0 0 8px;
-      color: var(--green-bright);
-      font-size: 0.78rem;
-      font-weight: 900;
-      letter-spacing: 0.17em;
-      text-transform: uppercase;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: clamp(2rem, 4.5vw, 3.3rem);
-      line-height: 1.08;
-      letter-spacing: -0.045em;
-    }
-
-    .section-description {
-      margin: 14px auto 0;
-      max-width: 610px;
-      color: var(--muted);
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 17px;
-    }
-
-    .feature-card {
-      padding: 25px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: linear-gradient(150deg, rgba(18, 35, 21, 0.85), rgba(8, 15, 9, 0.88));
-      transition: transform 180ms ease, border-color 180ms ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(115, 255, 157, 0.52);
-    }
-
-    .feature-icon {
-      display: grid;
-      place-items: center;
-      width: 51px;
-      height: 51px;
-      margin-bottom: 18px;
-      border: 1px solid rgba(115, 255, 157, 0.2);
-      border-radius: 15px;
-      background: rgba(55, 240, 120, 0.09);
-      font-size: 1.5rem;
-    }
-
-    .feature-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.15rem;
-    }
-
-    .feature-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.93rem;
-    }
-
-    .shop-panel {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      gap: 35px;
-      padding: clamp(25px, 5vw, 50px);
-      border: 1px solid rgba(245, 203, 97, 0.22);
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at 0% 100%, rgba(55, 240, 120, 0.12), transparent 45%),
-        linear-gradient(130deg, rgba(19, 35, 21, 0.94), rgba(6, 12, 7, 0.96));
-      box-shadow: var(--shadow);
-    }
-
-    .shop-art {
-      min-height: 260px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(115, 255, 157, 0.17);
-      border-radius: 22px;
-      background:
-        radial-gradient(circle, rgba(64, 255, 126, 0.18), transparent 53%),
-        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 12px),
-        #07110a;
-      overflow: hidden;
-    }
-
-    .coin {
-      display: grid;
-      place-items: center;
-      width: 175px;
-      height: 175px;
-      border: 8px double #d5ff9b;
-      border-radius: 50%;
-      color: #09200d;
-      background: radial-gradient(circle at 30% 25%, #e8ffc0, #79ef52 43%, #16883b 78%);
-      box-shadow: 0 0 0 10px rgba(55, 240, 120, 0.08), 0 0 55px rgba(55, 240, 120, 0.24);
-      font-size: 4.8rem;
-      font-weight: 1000;
-      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.35);
-      transform: rotate(-10deg);
-    }
-
-    .shop-copy h2 {
-      margin-bottom: 15px;
-    }
-
-    .shop-copy p {
-      color: var(--muted);
-      margin: 0 0 22px;
-    }
-
-    .shop-disclaimer {
-      display: block;
-      margin-top: 12px;
-      color: #8da392;
-      font-size: 0.78rem;
-    }
-
-    .connect-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .connect-card {
-      padding: 26px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--panel);
-    }
-
-    .connect-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.25rem;
-    }
-
-    .connect-card p {
-      color: var(--muted);
-      margin: 0 0 17px;
-    }
-
-    .site-url {
-      display: block;
-      margin-bottom: 18px;
-      color: var(--green-bright);
-      font-weight: 850;
-      overflow-wrap: anywhere;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      counter-reset: step;
-    }
-
-    .step {
-      position: relative;
-      padding: 24px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: rgba(10, 20, 12, 0.8);
-      counter-increment: step;
-    }
-
-    .step::before {
-      content: "0" counter(step);
-      display: inline-block;
-      margin-bottom: 18px;
-      color: var(--green-bright);
-      font-size: 1.3rem;
-      font-weight: 1000;
-      letter-spacing: 0.08em;
-    }
-
-    .step h3 {
-      margin: 0 0 8px;
-    }
-
-    .step p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.93rem;
-    }
-
-    .notice {
-      display: flex;
-      align-items: flex-start;
-      gap: 13px;
-      padding: 18px 20px;
-      border: 1px solid rgba(245, 203, 97, 0.25);
-      border-radius: 15px;
-      background: rgba(245, 203, 97, 0.06);
-      color: #f5e7bc;
-    }
-
-    .notice-icon {
-      flex: 0 0 auto;
-      font-size: 1.2rem;
-    }
-
-    .notice p {
-      margin: 0;
-    }
-
-    .faq-list {
-      max-width: 850px;
-      margin: 0 auto;
-      display: grid;
-      gap: 12px;
-    }
-
-    .faq-item {
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      background: rgba(11, 22, 13, 0.85);
-      overflow: hidden;
-    }
-
-    .faq-question {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 18px 20px;
-      border: 0;
-      color: var(--text);
-      background: transparent;
-      text-align: left;
-      font-weight: 850;
-    }
-
-    .faq-symbol {
-      color: var(--green-bright);
-      font-size: 1.3rem;
-      transition: transform 160ms ease;
-    }
-
-    .faq-answer {
-      display: none;
-      padding: 0 20px 20px;
-      color: var(--muted);
-    }
-
-    .faq-item.open .faq-answer {
-      display: block;
-    }
-
-    .faq-item.open .faq-symbol {
-      transform: rotate(45deg);
-    }
-
-    .faq-answer p {
-      margin: 0;
-    }
-
-    .final-cta {
-      padding: 45px 25px;
-      border: 1px solid rgba(115, 255, 157, 0.22);
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(55, 240, 120, 0.15), transparent 55%),
-        rgba(10, 20, 12, 0.9);
-      text-align: center;
-    }
-
-    .final-cta h2 {
-      max-width: 760px;
-      margin: 0 auto 14px;
-    }
-
-    .final-cta p {
-      max-width: 620px;
-      margin: 0 auto 23px;
-      color: var(--muted);
-    }
-
-    .site-footer {
-      padding: 32px 0;
-      border-top: 1px solid rgba(115, 255, 157, 0.12);
-      color: var(--muted);
-      font-size: 0.87rem;
-    }
-
-    .footer-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 17px;
-    }
-
-    .footer-links a:hover {
-      color: var(--green-bright);
-    }
-
-    .back-to-top {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 80;
-      width: 44px;
-      height: 44px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      color: #041008;
-      background: var(--green-bright);
-      box-shadow: var(--shadow);
-      font-size: 1.2rem;
-      font-weight: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(8px);
-      transition: opacity 180ms ease, transform 180ms ease;
-    }
-
-    .back-to-top.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 25px;
-      z-index: 200;
-      max-width: calc(100% - 30px);
-      padding: 12px 17px;
-      border: 1px solid rgba(115, 255, 157, 0.25);
-      border-radius: 12px;
-      color: var(--text);
-      background: #102317;
-      box-shadow: var(--shadow);
-      text-align: center;
-      transform: translate(-50%, 18px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 180ms ease, transform 180ms ease;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    @media (max-width: 900px) {
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 35px;
-      }
-
-      .hero-copy {
-        max-width: 720px;
-      }
-
-      .hero-card {
-        max-width: 650px;
-      }
-
-      .feature-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .shop-panel {
-        grid-template-columns: 1fr;
-      }
-
-      .shop-art {
-        min-height: 220px;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .container {
-        width: min(var(--max-width), calc(100% - 28px));
-      }
-
-      .nav {
-        min-height: 68px;
-      }
-
-      .nav-toggle {
-        display: inline-flex;
-      }
-
-      .nav-links {
-        position: absolute;
-        top: calc(100% + 1px);
-        left: 0;
-        right: 0;
-        display: none;
-        align-items: stretch;
-        flex-direction: column;
-        gap: 0;
-        padding: 10px 14px 16px;
-        border-bottom: 1px solid var(--border);
-        background: rgba(4, 10, 6, 0.98);
-      }
-
-      .nav-links.open {
-        display: flex;
-      }
-
-      .nav-links a {
-        padding: 12px 8px;
-      }
-
-      .nav-join {
-        display: none;
-      }
-
-      .hero {
-        padding: 68px 0 45px;
-      }
-
-      h1 {
-        font-size: clamp(3rem, 16vw, 5rem);
-      }
-
-      .hero-copy {
-        font-size: 1rem;
-      }
-
-      .hero-card {
-        padding: 20px;
-      }
-
-      .section {
-        padding: 55px 0;
-      }
-
-      .feature-grid,
-      .connect-grid,
-      .steps {
-        grid-template-columns: 1fr;
-      }
-
-      .server-meta {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .footer-row {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .coin {
-        width: 145px;
-        height: 145px;
-        font-size: 4rem;
-      }
-    }
-
-    @media (max-width: 430px) {
-      .brand-tagline {
-        font-size: 0.62rem;
-      }
-
-      .brand-name {
-        font-size: 1rem;
-      }
-
-      .brand-mark {
-        width: 38px;
-        height: 38px;
-      }
-
-      .hero-actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .button {
-        width: 100%;
-      }
-
-      .ip-box {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .copy-button {
-        width: 100%;
-      }
-
-      .server-meta {
-        grid-template-columns: 1fr;
-      }
-
-      .shop-panel {
-        padding: 20px;
-      }
-
-      .final-cta {
-        padding: 32px 18px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07130d">
+<meta name="description" content="KoneSMP — Minecraft survival, community, and player shop.">
+<title>KoneSMP — Survival & Shop</title>
+<style>
+:root {
+  --bg:#06110b; --panel:#0b1b12; --panel2:#10281a; --green:#35f27b;
+  --green2:#16b957; --mint:#b8ffd0; --text:#f0fff4; --muted:#9bb8a4;
+  --line:rgba(117,255,163,.19); --gold:#ffe28a; --danger:#ffb4b4;
+  --shadow:0 22px 70px rgba(0,0,0,.34); --radius:22px;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:90px; }
+body {
+  margin:0; color:var(--text); background:
+    radial-gradient(ellipse at 80% 0%,rgba(32,199,89,.16),transparent 36%),
+    radial-gradient(ellipse at 0% 40%,rgba(22,185,87,.09),transparent 34%),var(--bg);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.6;
+}
+a { color:inherit; text-decoration:none; }
+button,input,select { font:inherit; }
+button,a { -webkit-tap-highlight-color:transparent; }
+button { cursor:pointer; }
+img { max-width:100%; display:block; }
+.wrap { width:min(1120px,calc(100% - 36px)); margin-inline:auto; }
+.skip { position:absolute; left:-9999px; top:auto; }
+.skip:focus { left:12px; top:12px; z-index:1000; background:#fff; color:#000; padding:10px; }
+.topline { height:4px; background:linear-gradient(90deg,#0b6c31,var(--green),#b6ffc9,var(--green2)); }
+header {
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(16px);
+  background:rgba(5,16,9,.88); border-bottom:1px solid var(--line);
+}
+.nav { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.brand { display:flex; align-items:center; gap:11px; font-weight:950; letter-spacing:.04em; }
+.brand-mark {
+  width:42px; height:42px; display:grid; place-items:center; border-radius:13px;
+  color:#05210f; background:linear-gradient(145deg,#b8ffcc,#21d765);
+  box-shadow:0 0 28px rgba(53,242,123,.22); font-size:22px;
+}
+.brand small { display:block; color:var(--muted); font-size:10px; letter-spacing:.2em; }
+.navlinks { display:flex; align-items:center; gap:22px; color:var(--muted); font-size:14px; font-weight:700; }
+.navlinks a:hover,.navlinks a:focus-visible { color:var(--green); }
+.nav-actions { display:flex; gap:10px; align-items:center; }
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:44px; padding:11px 17px; border:1px solid var(--line); border-radius:13px;
+  background:var(--panel2); color:var(--text); font-weight:850; transition:transform .18s,background .18s,border .18s;
+}
+.btn:hover { transform:translateY(-2px); border-color:rgba(53,242,123,.65); }
+.btn-primary { color:#04200e; background:linear-gradient(135deg,#8cffad,#28e86b); border-color:transparent; }
+.btn-quiet { background:rgba(255,255,255,.035); }
+.menu-toggle { display:none; }
+.hero { padding:78px 0 56px; overflow:hidden; position:relative; }
+.hero-grid { display:grid; grid-template-columns:1.1fr .9fr; align-items:center; gap:48px; }
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line);
+  background:rgba(53,242,123,.07); color:var(--mint); border-radius:999px;
+  padding:7px 12px; font-size:12px; font-weight:900; letter-spacing:.12em; text-transform:uppercase;
+}
+.dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 14px var(--green); }
+h1 { margin:20px 0 16px; font-size:clamp(42px,6vw,76px); line-height:.99; letter-spacing:-.055em; }
+h1 span { color:var(--green); text-shadow:0 0 34px rgba(53,242,123,.18); }
+.lead { max-width:590px; color:var(--muted); font-size:18px; }
+.hero-buttons { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
+.quick-facts { display:flex; gap:22px; flex-wrap:wrap; margin-top:30px; color:var(--muted); font-size:13px; }
+.quick-facts strong { display:block; color:var(--text); font-size:15px; }
+.hero-art { min-height:390px; position:relative; display:grid; place-items:center; }
+.orbit { position:absolute; width:min(100%,390px); aspect-ratio:1; border:1px solid rgba(93,255,144,.22); border-radius:50%; box-shadow:inset 0 0 50px rgba(38,220,98,.04); }
+.orbit:before,.orbit:after { content:""; position:absolute; inset:25px; border:1px dashed rgba(93,255,144,.2); border-radius:50%; }
+.orbit:after { inset:58px; border-style:solid; opacity:.55; }
+.coin {
+  width:218px; aspect-ratio:1; border-radius:50%; display:grid; place-items:center;
+  position:relative; z-index:2; border:9px ridge #6ef39b;
+  background:radial-gradient(circle at 34% 26%,#d0ffdc 0%,#62ed8c 20%,#18a94d 54%,#075426 100%);
+  color:#063318; font-size:90px; font-weight:1000; text-shadow:0 2px 0 rgba(255,255,255,.3);
+  box-shadow:0 0 0 14px rgba(53,242,123,.06),0 25px 90px rgba(21,204,82,.25),inset 0 0 0 6px rgba(3,78,31,.4);
+  transform:rotate(-10deg);
+}
+.float-card { position:absolute; z-index:3; padding:13px 16px; border:1px solid var(--line); border-radius:16px; background:rgba(8,28,16,.9); box-shadow:var(--shadow); }
+.float-card strong { display:block; font-size:13px; }
+.float-card small { color:var(--muted); }
+.float-one { top:35px; right:0; }
+.float-two { bottom:42px; left:0; }
+.section { padding:70px 0; }
+.section-head { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:28px; }
+.kicker { color:var(--green); font-size:12px; font-weight:950; letter-spacing:.17em; text-transform:uppercase; }
+h2 { font-size:clamp(28px,4vw,44px); line-height:1.08; letter-spacing:-.035em; margin:8px 0 0; }
+.section-head p { max-width:480px; margin:0; color:var(--muted); }
+.cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.card { padding:23px; border:1px solid var(--line); border-radius:var(--radius); background:linear-gradient(145deg,rgba(17,43,27,.86),rgba(7,22,13,.9)); box-shadow:0 12px 40px rgba(0,0,0,.12); }
+.card-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; background:rgba(53,242,123,.1); color:var(--green); font-size:24px; }
+.card h3 { margin:16px 0 7px; font-size:20px; }
+.card p { color:var(--muted); margin:0; }
+.shop-tools { display:flex; gap:12px; flex-wrap:wrap; margin:24px 0; }
+.search {
+  flex:1; min-width:220px; color:var(--text); background:#08180e; border:1px solid var(--line);
+  border-radius:13px; padding:12px 15px; outline:none;
+}
+.search:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(53,242,123,.1); }
+.filter { color:var(--text); background:#08180e; border:1px solid var(--line); border-radius:13px; padding:12px; }
+.products { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.product { padding:0; overflow:hidden; display:flex; flex-direction:column; }
+.product-art { min-height:160px; display:grid; place-items:center; position:relative; background:radial-gradient(circle,rgba(53,242,123,.16),transparent 65%),#0a2112; border-bottom:1px solid var(--line); }
+.product-emoji { font-size:62px; filter:drop-shadow(0 10px 20px rgba(53,242,123,.16)); }
+.product-body { padding:20px; display:flex; flex-direction:column; gap:10px; flex:1; }
+.product-title { display:flex; align-items:start; justify-content:space-between; gap:10px; }
+.product-title h3 { margin:0; font-size:18px; }
+.price { color:var(--green); font-weight:950; white-space:nowrap; }
+.pill { display:inline-flex; align-self:flex-start; padding:4px 9px; border-radius:999px; background:rgba(53,242,123,.09); color:var(--mint); font-size:11px; font-weight:900; }
+.product-body p { color:var(--muted); margin:0; font-size:14px; flex:1; }
+.product-body .btn { width:100%; margin-top:5px; }
+.note { color:var(--muted); font-size:13px; margin-top:17px; }
+.notice { padding:18px 20px; border:1px solid rgba(255,226,138,.2); border-radius:15px; background:rgba(255,226,138,.05); color:#e9dfb5; font-size:14px; }
+.connect-panel { display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center; padding:28px; border:1px solid var(--line); border-radius:var(--radius); background:linear-gradient(115deg,rgba(24,104,51,.24),rgba(9,29,16,.92)); }
+.address { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:15px; }
+.address code { color:var(--mint); background:#041008; border:1px solid var(--line); padding:10px 13px; border-radius:10px; overflow-wrap:anywhere; }
+.steps { counter-reset:step; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.step { position:relative; padding:22px; border:1px solid var(--line); border-radius:18px; background:rgba(11,27,18,.72); }
+.step:before { counter-increment:step; content:"0" counter(step); color:var(--green); font-size:12px; font-weight:950; letter-spacing:.14em; }
+.step h3 { margin:10px 0 6px; }
+.step p { margin:0; color:var(--muted); }
+.faq { border-top:1px solid var(--line); }
+details { padding:18px 0; border-bottom:1px solid var(--line); }
+summary { cursor:pointer; font-weight:850; }
+details p { color:var(--muted); margin-bottom:0; }
+footer { border-top:1px solid var(--line); padding:30px 0; color:var(--muted); font-size:13px; }
+.footer-inner { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:center; }
+.toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,20px); opacity:0; pointer-events:none; z-index:100; padding:12px 18px; border-radius:12px; background:#d6ffe2; color:#06210f; font-weight:900; box-shadow:var(--shadow); transition:.2s; }
+.toast.show { opacity:1; transform:translate(-50%,0); }
+.empty { grid-column:1/-1; color:var(--muted); padding:30px; text-align:center; border:1px dashed var(--line); border-radius:16px; }
+@media (max-width:850px) {
+  .hero-grid { grid-template-columns:1fr; gap:12px; }
+  .hero-art { min-height:320px; }
+  .navlinks { display:none; position:absolute; left:18px; right:18px; top:76px; padding:18px; flex-direction:column; align-items:stretch; border:1px solid var(--line); border-radius:16px; background:#07170c; }
+  .navlinks.open { display:flex; }
+  .menu-toggle { display:inline-flex; }
+  .nav-actions .btn-quiet { display:none; }
+  .cards,.products,.steps { grid-template-columns:repeat(2,1fr); }
+  .connect-panel { grid-template-columns:1fr; }
+}
+@media (max-width:560px) {
+  .wrap { width:min(100% - 24px,1120px); }
+  .hero { padding-top:48px; }
+  .hero-art { min-height:270px; }
+  .coin { width:160px; font-size:65px; }
+  .float-card { padding:10px 12px; }
+  .section { padding:52px 0; }
+  .section-head { display:block; }
+  .section-head p { margin-top:12px; }
+  .cards,.products,.steps { grid-template-columns:1fr; }
+  .nav { min-height:68px; }
+  .navlinks { top:68px; }
+  .brand-mark { width:37px; height:37px; }
+  .connect-panel { padding:20px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
+}
+</style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header">
-    <div class="container nav">
-      <a class="brand" href="#home" aria-label="KoneSMP home">
-        <span class="brand-mark" aria-hidden="true">K</span>
-        <span>
-          <span class="brand-name">KONESMP</span>
-          <span class="brand-tagline">Survive. Build. Dominate.</span>
-        </span>
-      </a>
-
-      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navLinks">
-        <span aria-hidden="true">☰</span>
-        <span class="sr-only">Toggle navigation</span>
-      </button>
-
-      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
-        <a href="#features">Features</a>
-        <a href="#shop">Shop</a>
-        <a href="#connect">Connect</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-
-      <a class="button button-primary nav-join" href="#connect">Join the server <span aria-hidden="true">↗</span></a>
+<a class="skip" href="#main">Skip to content</a>
+<div class="topline"></div>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#home" aria-label="KoneSMP home">
+      <span class="brand-mark">K</span><span>KONESMP<small>SURVIVE • BUILD • THRIVE</small></span>
+    </a>
+    <nav class="navlinks" id="navlinks" aria-label="Main navigation">
+      <a href="#features">Features</a><a href="#shop">Shop</a><a href="#join">How to Join</a><a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-quiet" href="#shop">Browse shop</a>
+      <a class="btn btn-primary" href="#join">Join server ↗</a>
+      <button class="btn menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navlinks" aria-label="Toggle navigation">☰</button>
     </div>
-  </header>
-
-  <main id="main">
-    <section class="hero" id="home">
-      <div class="container hero-grid">
-        <div class="hero-copy-wrap">
-          <span class="eyebrow"><span class="eyebrow-dot"></span> Your next Minecraft adventure</span>
-          <h1>WELCOME TO <span class="gradient-text">KONESMP</span></h1>
-          <p class="hero-copy">
-            Build your base, make money, trade with players, and create your own story.
-            KoneSMP is your place to grind, explore, and grow with the community.
-          </p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#connect">Play KoneSMP <span aria-hidden="true">→</span></a>
-            <a class="button button-secondary" href="#shop">Explore the shop <span aria-hidden="true">⌁</span></a>
-          </div>
-          <p class="hero-note">
-            <span aria-hidden="true">◆</span>
-            <span><strong>Java server address:</strong> konesmp.aternos.me</span>
-          </p>
-        </div>
-
-        <aside class="hero-card" aria-label="Minecraft server connection card">
-          <div class="card-topline">
-            <span class="card-label">Server connection</span>
-            <span class="status-pill">Check Aternos</span>
-          </div>
-          <h2 class="server-name">KoneSMP</h2>
-          <p class="server-description">Copy the address below and add it in Minecraft Multiplayer.</p>
-
-          <div class="ip-box">
-            <div class="ip-content">
-              <span class="ip-caption">Server address</span>
-              <span class="ip-address" id="serverAddress">konesmp.aternos.me</span>
-            </div>
-            <button class="copy-button" id="copyServerButton" type="button">Copy IP</button>
-          </div>
-          <p class="copy-feedback" id="copyFeedback" aria-live="polite"></p>
-
-          <div class="server-meta">
-            <div class="meta-box">
-              <span class="meta-label">Game</span>
-              <span class="meta-value">Minecraft</span>
-            </div>
-            <div class="meta-box">
-              <span class="meta-label">Hosting</span>
-              <span class="meta-value">Aternos</span>
-            </div>
-          </div>
-        </aside>
+  </div>
+</header>
+<main id="main">
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Your next survival adventure</div>
+      <h1>WELCOME TO<br><span>KONESMP.</span></h1>
+      <p class="lead">Build your base, make your fortune, trade with players, and become part of the KoneSMP community. Everything you need starts right here.</p>
+      <div class="hero-buttons">
+        <a class="btn btn-primary" href="#join">🎮 Play KoneSMP</a>
+        <a class="btn" href="#shop">🪙 Explore the shop</a>
       </div>
-    </section>
-
-    <section class="section" id="features">
-      <div class="container">
-        <div class="section-heading">
-          <p class="section-kicker">Why KoneSMP?</p>
-          <h2>Your world. Your grind. <span class="gradient-text">Your legacy.</span></h2>
-          <p class="section-description">
-            Whether you're a builder, trader, explorer, or PvP player, there's room to make your mark.
-          </p>
-        </div>
-
-        <div class="feature-grid">
-          <article class="feature-card">
-            <div class="feature-icon" aria-hidden="true">⛏</div>
-            <h3>Grind and progress</h3>
-            <p>Collect resources, improve your gear, and turn a small start into a powerful survival setup.</p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon" aria-hidden="true">◈</div>
-            <h3>Build your base</h3>
-            <p>Create a hidden bunker, a huge castle, or a community town that other players remember.</p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon" aria-hidden="true">＄</div>
-            <h3>Trade and earn</h3>
-            <p>Use the player economy to exchange items, find deals, and build your in-game wealth.</p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon" aria-hidden="true">⚔</div>
-            <h3>Take the challenge</h3>
-            <p>Prepare your equipment, sharpen your strategy, and test yourself when the server rules allow it.</p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon" aria-hidden="true">🌲</div>
-            <h3>Explore the world</h3>
-            <p>Travel beyond spawn, discover useful resources, and find the perfect place to settle down.</p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon" aria-hidden="true">♧</div>
-            <h3>Play together</h3>
-            <p>Meet other players, form alliances, build projects, and help the KoneSMP community grow.</p>
-          </article>
-        </div>
+      <div class="quick-facts">
+        <div><strong>Survival</strong>Build your story</div>
+        <div><strong>Player economy</strong>Trade and grow</div>
+        <div><strong>Community</strong>Play together</div>
       </div>
-    </section>
-
-    <section class="section" id="shop">
-      <div class="container">
-        <div class="shop-panel">
-          <div class="shop-art" role="img" aria-label="Stylized green coin representing the KoneSMP shop">
-            <div class="coin" aria-hidden="true">K</div>
-          </div>
-          <div class="shop-copy">
-            <p class="section-kicker">KoneSMP shop</p>
-            <h2>Power up your <span class="gradient-text">adventure.</span></h2>
-            <p>
-              Check out the KoneSMP shop for server updates, community perks, and any available offers.
-              Keep an eye on the official website for current details.
-            </p>
-            <a class="button button-primary" href="https://konesmp.pages.dev" target="_blank" rel="noopener noreferrer">
-              Open KoneSMP website <span aria-hidden="true">↗</span>
-            </a>
-            <small class="shop-disclaimer">
-              Only advertise items and perks that are actually available on your server.
-            </small>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="connect">
-      <div class="container">
-        <div class="section-heading">
-          <p class="section-kicker">Get connected</p>
-          <h2>Join the <span class="gradient-text">world.</span></h2>
-          <p class="section-description">
-            Use the Minecraft address to join the game, or open the website to see your server page.
-          </p>
-        </div>
-
-        <div class="connect-grid">
-          <article class="connect-card">
-            <h3>🎮 Minecraft server</h3>
-            <p>Copy this address and add it to your Minecraft server list.</p>
-            <span class="site-url">konesmp.aternos.me</span>
-            <button class="button button-primary" id="copyConnectButton" type="button">Copy server IP</button>
-          </article>
-
-          <article class="connect-card">
-            <h3>🌐 KoneSMP website</h3>
-            <p>Visit the web page hosted on Cloudflare Pages.</p>
-            <span class="site-url">konesmp.pages.dev</span>
-            <a class="button button-secondary" href="https://konesmp.pages.dev" target="_blank" rel="noopener noreferrer">
-              Visit website <span aria-hidden="true">↗</span>
-            </a>
-          </article>
-        </div>
-
-        <div style="height: 22px;"></div>
-
-        <div class="notice">
-          <span class="notice-icon" aria-hidden="true">⚠</span>
-          <p>
-            <strong>Important:</strong> Aternos servers are not guaranteed to stay online 24/7.
-            If the server is stopped, start it in the Aternos panel before trying to join.
-            This website can stay online while the Minecraft server is offline.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="how-to-join">
-      <div class="container">
-        <div class="section-heading">
-          <p class="section-kicker">First time here?</p>
-          <h2>How to join KoneSMP</h2>
-          <p class="section-description">Follow these steps to add the server to your Minecraft list.</p>
-        </div>
-
-        <div class="steps">
-          <article class="step">
-            <h3>Open Minecraft</h3>
-            <p>Launch the correct Minecraft edition and version for the server.</p>
-          </article>
-          <article class="step">
-            <h3>Open Multiplayer</h3>
-            <p>Select Multiplayer, then choose Add Server or Direct Connection.</p>
-          </article>
-          <article class="step">
-            <h3>Paste the address</h3>
-            <p>Enter konesmp.aternos.me, save it, and join when the server is online.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="faq">
-      <div class="container">
-        <div class="section-heading">
-          <p class="section-kicker">Need help?</p>
-          <h2>Frequently asked <span class="gradient-text">questions.</span></h2>
-          <p class="section-description">A few quick answers about connecting to KoneSMP.</p>
-        </div>
-
-        <div class="faq-list">
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              What is the server IP?
-              <span class="faq-symbol" aria-hidden="true">＋</span>
-            </button>
-            <div class="faq-answer">
-              <p>The address shown on this page is <strong>konesmp.aternos.me</strong>. Copy it into Minecraft Multiplayer.</p>
-            </div>
-          </article>
-
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              Why can't I join the server?
-              <span class="faq-symbol" aria-hidden="true">＋</span>
-            </button>
-            <div class="faq-answer">
-              <p>The Aternos server may be offline, starting, or using a different Minecraft version. Check the Aternos panel and try again when it is online.</p>
-            </div>
-          </article>
-
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              Does this website keep the server online?
-              <span class="faq-symbol" aria-hidden="true">＋</span>
-            </button>
-            <div class="faq-answer">
-              <p>No. A website cannot keep an Aternos Minecraft server running. For true 24/7 uptime, use a hosting plan that supports an always-on server.</p>
-            </div>
-          </article>
-
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              Where is the shop?
-              <span class="faq-symbol" aria-hidden="true">＋</span>
-            </button>
-            <div class="faq-answer">
-              <p>Use the Shop section on this page to open konesmp.pages.dev. Add your real shop checkout link there when you have one.</p>
-            </div>
-          </article>
-
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              Can I play on Bedrock Edition?
-              <span class="faq-symbol" aria-hidden="true">＋</span>
-            </button>
-            <div class="faq-answer">
-              <p>That depends on whether your server has Bedrock cross-play configured. If it does not, use the Minecraft edition supported by the server.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div class="final-cta">
-          <p class="section-kicker">Your adventure starts here</p>
-          <h2>Ready to make your <span class="gradient-text">mark?</span></h2>
-          <p>Copy the server address, check that KoneSMP is online, and jump into the world.</p>
-          <button class="button button-primary" id="finalCopyButton" type="button">Copy KoneSMP IP</button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-row">
-      <div>
-        <strong style="color: var(--text);">KONESMP</strong>
-        <span> · Minecraft community website</span>
-        <div>© <span id="year"></span> KoneSMP. All rights reserved.</div>
-      </div>
-      <nav class="footer-links" aria-label="Footer navigation">
-        <a href="#home">Home</a>
-        <a href="#features">Features</a>
-        <a href="#shop">Shop</a>
-        <a href="#connect">Connect</a>
-      </nav>
     </div>
-  </footer>
+    <div class="hero-art" aria-label="Green KoneSMP coin artwork">
+      <div class="orbit"></div><div class="coin">K</div>
+      <div class="float-card float-one"><strong>🪙 Kone economy</strong><small>Earn • Trade • Upgrade</small></div>
+      <div class="float-card float-two"><strong>⛏️ Make your mark</strong><small>Your adventure starts here</small></div>
+    </div>
+  </div>
+</section>
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head"><div><div class="kicker">Why KoneSMP</div><h2>Your world. Your grind.</h2></div><p>Make a home, build your wealth, and find your own way to play.</p></div>
+    <div class="cards">
+      <article class="card"><div class="card-icon">⛏️</div><h3>Survival gameplay</h3><p>Gather resources, explore the world, build a base, and work your way up.</p></article>
+      <article class="card"><div class="card-icon">🪙</div><h3>Shop & economy</h3><p>Browse the KoneSMP shop section and check the available items and perks.</p></article>
+      <article class="card"><div class="card-icon">🤝</div><h3>Player community</h3><p>Team up with friends, trade fairly, and make your own reputation on the server.</p></article>
+    </div>
+  </div>
+</section>
+<section class="section" id="shop">
+  <div class="wrap">
+    <div class="section-head"><div><div class="kicker">KoneSMP store</div><h2>THE SHOP<span style="color:var(--green)">.</span></h2></div><p>A shop area built into the main site. Replace the sample cards below with your real Squarespace products and prices.</p></div>
+    <div class="notice">These are sample listings, not confirmed products or prices from your Squarespace shop. The admin/configuration URL you supplied doesn't expose the public product catalogue here.</div>
+    <div class="shop-tools">
+      <input class="search" id="productSearch" type="search" placeholder="Search shop items…" aria-label="Search shop items">
+      <select class="filter" id="categoryFilter" aria-label="Filter shop category">
+        <option value="all">All categories</option><option value="ranks">Ranks</option><option value="currency">Currency</option><option value="items">Items</option>
+      </select>
+    </div>
+    <div class="products" id="products">
+      <article class="card product" data-category="ranks" data-name="starter rank"><div class="product-art"><span class="product-emoji">🛡️</span></div><div class="product-body"><span class="pill">SAMPLE LISTING</span><div class="product-title"><h3>Starter Rank</h3><span class="price">Set price</span></div><p>Add the real rank description, benefits, and price from your store.</p><a class="btn" href="https://iris-pug-nnfh.squarespace.com/config/?frameUrl=%2F" target="_blank" rel="noopener noreferrer">View original shop ↗</a></div></article>
+      <article class="card product" data-category="currency" data-name="coin bundle"><div class="product-art"><span class="product-emoji">🪙</span></div><div class="product-body"><span class="pill">SAMPLE LISTING</span><div class="product-title"><h3>Coin Bundle</h3><span class="price">Set price</span></div><p>Use this card for a currency pack or another real shop product.</p><a class="btn" href="https://iris-pug-nnfh.squarespace.com/config/?frameUrl=%2F" target="_blank" rel="noopener noreferrer">View original shop ↗</a></div></article>
+      <article class="card product" data-category="items" data-name="survival kit"><div class="product-art"><span class="product-emoji">🎒</span></div><div class="product-body"><span class="pill">SAMPLE LISTING</span><div class="product-title"><h3>Survival Kit</h3><span class="price">Set price</span></div><p>Replace this with the exact item, description, and delivery details.</p><a class="btn" href="https://iris-pug-nnfh.squarespace.com/config/?frameUrl=%2F" target="_blank" rel="noopener noreferrer">View original shop ↗</a></div></article>
+    </div>
+    <p class="note">For real purchases, connect each listing to an authorized checkout/payment flow and a secure delivery backend. Never collect payment details directly in this HTML file.</p>
+  </div>
+</section>
+<section class="section" id="join">
+  <div class="wrap">
+    <div class="section-head"><div><div class="kicker">Join the server</div><h2>READY TO PLAY?</h2></div><p>Use the server connection link below. A website URL is not necessarily the Minecraft multiplayer address.</p></div>
+    <div class="connect-panel">
+      <div><div class="eyebrow"><span class="dot"></span> KoneSMP connection</div><h3 style="font-size:25px;margin:14px 0 0">Open the KoneSMP endpoint</h3><p style="color:var(--muted);margin:6px 0 0">Your supplied Workers URL is linked here as requested.</p><div class="address"><code id="serverAddress">https://konesmp.micupclipsroblox.workers.dev/</code><button class="btn btn-primary" id="copyAddress">Copy link</button></div></div>
+      <a class="btn" href="https://konesmp.micupclipsroblox.workers.dev/" target="_blank" rel="noopener noreferrer">Open link ↗</a>
+    </div>
+    <div class="steps" style="margin-top:18px">
+      <article class="step"><h3>Open Minecraft</h3><p>Launch the Minecraft edition and version your server supports.</p></article>
+      <article class="step"><h3>Add a server</h3><p>Enter the actual Minecraft server address and port supplied by your host.</p></article>
+      <article class="step"><h3>Join the adventure</h3><p>Connect when the server is online and invite your friends.</p></article>
+    </div>
+    <p class="note">Important: if this Workers URL is a website/API endpoint, it cannot be entered as a Minecraft server address unless you've specifically configured a Minecraft-compatible proxy there. Use the host-provided multiplayer hostname and port in Minecraft.</p>
+  </div>
+</section>
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-head"><div><div class="kicker">Quick answers</div><h2>FAQ</h2></div><p>Helpful details for players and store visitors.</p></div>
+    <div class="faq">
+      <details><summary>Is this the full Squarespace shop copied over?</summary><p>Not yet. The supplied link is a Squarespace configuration URL, not a public product page, so this page uses clearly marked sample listings. Export your products as a CSV from Squarespace or share the public store URL and product images to rebuild the real catalogue.</p></details>
+      <details><summary>Can I buy the sample products right now?</summary><p>No. The cards are placeholders and don't accept payments. Connect them to your legitimate checkout and a secure system that delivers purchases in-game.</p></details>
+      <details><summary>Does this website keep the Minecraft server online 24/7?</summary><p>No. A static website cannot keep a Minecraft server running. Configure 24/7 uptime through your hosting provider's supported settings or use a host that offers always-on service.</p></details>
+      <details><summary>Why might the link not work in Minecraft?</summary><p>A web URL and a Minecraft server address are different things. Use the multiplayer hostname and port shown by the Minecraft server host, unless your Workers endpoint has been explicitly configured as a compatible proxy.</p></details>
+      <details><summary>Can I put the admin password in this file?</summary><p>No. Anything placed in public HTML or JavaScript can be read by visitors. Keep credentials private, rotate any password that has been shared, and use the host's secure admin login and documented controls.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap footer-inner"><a class="brand" href="#home"><span class="brand-mark">K</span><span>KONESMP<small>COMMUNITY • SURVIVAL • SHOP</small></span></a><span>© <span id="year"></span> KoneSMP. Fan-run Minecraft community.</span><a href="#home">Back to top ↑</a></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite">Copied!</div>
+<script>
+(() => {
+  "use strict";
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const nav = $("#navlinks");
+  const toggle = $("#menuToggle");
+  const toast = $("#toast");
+  let toastTimer;
+  $("#year").textContent = new Date().getFullYear();
 
-  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top">↑</button>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
 
-  <script>
-    /* ============================================================
-       SITE SETTINGS
-       Edit these values if you change your server or website URL.
-       ============================================================ */
+  toggle.addEventListener("click", () => {
+    const isOpen = nav.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.textContent = isOpen ? "✕" : "☰";
+  });
 
-    const SERVER_IP = "konesmp.aternos.me";
-    const WEBSITE_URL = "https://konesmp.pages.dev";
+  $$("#navlinks a").forEach(link => {
+    link.addEventListener("click", () => {
+      nav.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "☰";
+    });
+  });
 
-    /* ============================================================
-       SMALL HELPERS
-       ============================================================ */
+  async function copyText(value) {
+    try {
+      await navigator.clipboard.writeText(value);
+      showToast("Link copied to clipboard!");
+    } catch {
+      const temp = document.createElement("textarea");
+      temp.value = value;
+      temp.setAttribute("readonly", "");
+      temp.style.position = "fixed";
+      temp.style.opacity = "0";
+      document.body.appendChild(temp);
+      temp.select();
+      const ok = document.execCommand("copy");
+      temp.remove();
+      showToast(ok ? "Link copied to clipboard!" : "Copy failed — select the link manually.");
+    }
+  }
+  $("#copyAddress").addEventListener("click", () => copyText($("#serverAddress").textContent.trim()));
 
-    const byId = (id) => document.getElementById(id);
-
-    function setText(element, message) {
-      if (element) {
-        element.textContent = message;
+  const search = $("#productSearch");
+  const filter = $("#categoryFilter");
+  const productCards = $$(".product", $("#products"));
+  function filterProducts() {
+    const term = search.value.trim().toLowerCase();
+    const category = filter.value;
+    let visible = 0;
+    productCards.forEach(card => {
+      const matchesText = (card.dataset.name + " " + card.textContent).toLowerCase().includes(term);
+      const matchesCategory = category === "all" || card.dataset.category === category;
+      const show = matchesText && matchesCategory;
+      card.hidden = !show;
+      if (show) visible++;
+    });
+    let empty = $("#emptyProducts");
+    if (!visible) {
+      if (!empty) {
+        empty = document.createElement("div");
+        empty.id = "emptyProducts";
+        empty.className = "empty";
+        empty.textContent = "No products match your search.";
+        $("#products").appendChild(empty);
       }
+    } else if (empty) {
+      empty.remove();
     }
+  }
+  search.addEventListener("input", filterProducts);
+  filter.addEventListener("change", filterProducts);
 
-    function showToast(message) {
-      const toast = byId("toast");
-
-      if (!toast) {
-        return;
-      }
-
-      toast.textContent = message;
-      toast.classList.add("show");
-
-      window.clearTimeout(showToast.timeoutId);
-
-      showToast.timeoutId = window.setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2400);
-    }
-
-    /* ============================================================
-       COPY SERVER ADDRESS
-       ============================================================ */
-
-    async function copyText(text) {
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-          return true;
-        }
-
-        const temporaryInput = document.createElement("textarea");
-        temporaryInput.value = text;
-        temporaryInput.setAttribute("readonly", "");
-        temporaryInput.style.position = "fixed";
-        temporaryInput.style.opacity = "0";
-        temporaryInput.style.pointerEvents = "none";
-
-        document.body.appendChild(temporaryInput);
-        temporaryInput.select();
-        temporaryInput.setSelectionRange(0, temporaryInput.value.length);
-
-        const successful = document.execCommand("copy");
-        document.body.removeChild(temporaryInput);
-
-        return successful;
-      } catch (error) {
-        console.error("Could not copy text:", error);
-        return false;
-      }
-    }
-
-    async function copyServerAddress() {
-      const success = await copyText(SERVER_IP);
-      const feedback = byId("copyFeedback");
-
-      if (success) {
-        setText(feedback, "Copied! Paste it into Minecraft Multiplayer.");
-        showToast("Server IP copied: " + SERVER_IP);
-      } else {
-        setText(feedback, "Copy failed. Select and copy: " + SERVER_IP);
-        showToast("Copy failed — please copy the IP manually.");
-      }
-    }
-
-    function bindCopyButtons() {
-      const buttonIds = [
-        "copyServerButton",
-        "copyConnectButton",
-        "finalCopyButton"
-      ];
-
-      buttonIds.forEach((id) => {
-        const button = byId(id);
-
-        if (button) {
-          button.addEventListener("click", copyServerAddress);
-        }
-      });
-    }
-
-    /* ============================================================
-       MOBILE NAVIGATION
-       ============================================================ */
-
-    function setupMobileNavigation() {
-      const toggle = byId("navToggle");
-      const links = byId("navLinks");
-
-      if (!toggle || !links) {
-        return;
-      }
-
-      toggle.addEventListener("click", () => {
-        const isOpen = links.classList.toggle("open");
-
-        toggle.setAttribute("aria-expanded", String(isOpen));
-      });
-
-      links.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          links.classList.remove("open");
-          toggle.setAttribute("aria-expanded", "false");
-        });
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          links.classList.remove("open");
-          toggle.setAttribute("aria-expanded", "false");
-        }
-      });
-    }
-
-    /* ============================================================
-       FAQ ACCORDION
-       ============================================================ */
-
-    function setupFaq() {
-      const questions = document.querySelectorAll(".faq-question");
-
-      questions.forEach((question) => {
-        question.addEventListener("click", () => {
-          const item = question.closest(".faq-item");
-
-          if (!item) {
-            return;
-          }
-
-          const willOpen = !item.classList.contains("open");
-
-          document.querySelectorAll(".faq-item").forEach((otherItem) => {
-            otherItem.classList.remove("open");
-
-            const otherQuestion = otherItem.querySelector(".faq-question");
-
-            if (otherQuestion) {
-              otherQuestion.setAttribute("aria-expanded", "false");
-            }
-          });
-
-          if (willOpen) {
-            item.classList.add("open");
-            question.setAttribute("aria-expanded", "true");
-          }
-        });
-      });
-    }
-
-    /* ============================================================
-       BACK TO TOP BUTTON
-       ============================================================ */
-
-    function setupBackToTop() {
-      const button = byId("backToTop");
-
-      if (!button) {
-        return;
-      }
-
-      const updateVisibility = () => {
-        if (window.scrollY > 500) {
-          button.classList.add("visible");
-        } else {
-          button.classList.remove("visible");
-        }
-      };
-
-      window.addEventListener("scroll", updateVisibility, { passive: true });
-
-      button.addEventListener("click", () => {
-        window.scrollTo({
-          top: 0,
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-            ? "auto"
-            : "smooth"
-        });
-      });
-
-      updateVisibility();
-    }
-
-    /* ============================================================
-       FOOTER YEAR AND LINKS
-       ============================================================ */
-
-    function setupFooter() {
-      setText(byId("year"), String(new Date().getFullYear()));
-
-      document.querySelectorAll('a[href="#"]').forEach((link) => {
-        link.addEventListener("click", (event) => {
-          event.preventDefault();
-        });
-      });
-    }
-
-    /* ============================================================
-       CONFIGURATION CHECKS
-       ============================================================ */
-
-    function setupServerDetails() {
-      setText(byId("serverAddress"), SERVER_IP);
-
-      const ipAddress = byId("serverAddress");
-
-      if (ipAddress) {
-        ipAddress.setAttribute("title", "Copy this address into Minecraft Multiplayer");
-      }
-
-      document.querySelectorAll('a[href="https://konesmp.pages.dev"]').forEach((link) => {
-        link.href = WEBSITE_URL;
-      });
-    }
-
-    /* ============================================================
-       ACCESSIBILITY HELPERS
-       ============================================================ */
-
-    function setupExternalLinks() {
-      document.querySelectorAll('a[target="_blank"]').forEach((link) => {
-        const relValues = new Set(
-          (link.getAttribute("rel") || "").split(/\s+/).filter(Boolean)
-        );
-
-        relValues.add("noopener");
-        relValues.add("noreferrer");
-
-        link.setAttribute("rel", Array.from(relValues).join(" "));
-      });
-    }
-
-    /* ============================================================
-       INITIALIZE THE PAGE
-       ============================================================ */
-
-    function initializeKoneSMP() {
-      setupServerDetails();
-      bindCopyButtons();
-      setupMobileNavigation();
-      setupFaq();
-      setupBackToTop();
-      setupFooter();
-      setupExternalLinks();
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initializeKoneSMP);
-    } else {
-      initializeKoneSMP();
-    }
-  </script>
+  // Open internal anchors smoothly without leaving the current page.
+  $$('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", event => {
+      const target = $(anchor.getAttribute("href"));
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      history.replaceState(null, "", anchor.getAttribute("href"));
+    });
+  });
+})();
+</script>
 </body>
 </html>
-
-
-<!--
-KONESMP EDITING GUIDE
-1. To change the Minecraft address, edit SERVER_IP in the script.
-2. To change the website address, edit WEBSITE_URL in the script.
-3. To change the green theme, edit the CSS custom properties in :root.
-4. To change the hero background, upload assets/konesmp-background.png.
-5. If that image is missing, the gradient background still displays.
-6. To change the shop destination, edit the shop link in the HTML.
-7. The copy buttons use the Clipboard API when available.
-8. A fallback copy method is included for older browser environments.
-9. The mobile menu collapses into a button on smaller screens.
-10. FAQ items are keyboard-operable native buttons.
-11. The page includes focus outlines for keyboard navigation.
-12. Reduced-motion preferences are respected in the CSS.
-13. This page is static; it does not control Aternos uptime.
-14. A website cannot force a free Aternos server to stay online.
-15. Do not add bot scripts intended to keep an Aternos server awake.
-16. For always-on gameplay, choose a host that supports 24/7 uptime.
-17. Cloudflare Pages can host this static HTML page independently.
-18. You can upload this file as index.html to your Pages project.
-19. Keep this file named index.html for the standard homepage route.
-20. If you add a real checkout, use a trusted shop platform.
-21. Never put private API keys or passwords in browser JavaScript.
-22. Public website source can be read by visitors.
-23. Test the page on desktop and mobile before publishing.
-24. Check that the Aternos address is correct before sharing it.
-25. Server version compatibility must be configured on the Minecraft host.
--->
-
-<!-- BRANDING: Brand name, tagline, accent colors, and visual identity. -->
-
-<!-- HEADER: Sticky navigation and responsive mobile menu. -->
-
-<!-- HERO: Introductory message and main server connection card. -->
-
-<!-- SERVER IP: Copy button and clear address presentation. -->
-
-<!-- FEATURES: Highlights that introduce the server experience. -->
-
-<!-- SHOP: Shop promotion area; replace destination with the real shop URL. -->
-
-<!-- CONNECT: Separate links for Minecraft and the website. -->
-
-<!-- JOIN GUIDE: Quick steps to connect through Minecraft Multiplayer. -->
-
-<!-- FAQ: Expandable answers to common server questions. -->
-
-<!-- FOOTER: Copyright year and navigation shortcuts. -->
-
-<!-- ACCESSIBILITY: Skip link, focus indicators, labels, and reduced-motion support. -->
-
-<!-- RESPONSIVE LAYOUT: Grid changes for tablets and small screens. -->
-
-<!-- COPY HANDLER: Clipboard API plus a fallback for older browsers. -->
-
-<!-- NAVIGATION HANDLER: Closes the mobile menu after choosing a section. -->
-
-<!-- FAQ HANDLER: Keeps the accordion simple and keyboard accessible. -->
-
-<!-- SCROLL HANDLER: Shows the back-to-top control after scrolling. -->
-
-<!-- HOSTING NOTE: The static site and Minecraft server have separate uptime. -->
